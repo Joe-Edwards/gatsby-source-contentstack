@@ -67,13 +67,17 @@ exports.sourceNodes = async ({ actions, getNode, getNodes, createNodeId, store, 
             return item.content_type_uid === contentType.uid;
         });
         const normalizedEntry = normalizeEntry(contentType, item.data,entriesNodeIds, assetsNodeIds, createNodeId);
-        const entryNode = processEntry(contentType, normalizedEntry, createNodeId, createContentDigest);
-        createNode(entryNode);
+        const entryNode = normalizedEntry ? processEntry(contentType, normalizedEntry, createNodeId, createContentDigest) : null;
+        if(entryNode){
+            createNode(entryNode);
+        }
     });
 
     syncData['asset_published'] && syncData['asset_published'].forEach(item => {
         const assetNode = processAsset(item.data, createNodeId, createContentDigest);
-        createNode(assetNode);
+        if(assetNode){
+            createNode(assetNode);
+        }
     });
 
     contentstackData.contentTypes.forEach(contentType => {
@@ -133,4 +137,6 @@ exports.sourceNodes = async ({ actions, getNode, getNodes, createNodeId, store, 
     return 
 
 };
+
+
 

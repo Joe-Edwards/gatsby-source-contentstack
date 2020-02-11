@@ -48,19 +48,27 @@ exports.processEntry = (content_type, entry, createNodeId, createContentDigest) 
 }
 
 exports.normalizeEntry = (contentType, entry, entriesNodeIds, assetsNodeIds, createNodeId) => {
-    let resolveEntry = Object.assign({}, entry, builtEntry(contentType.schema, entry, entry.publish_details.locale, entriesNodeIds, assetsNodeIds, createNodeId));
-    return resolveEntry;
+    if(entry.publish_details && entry.publish_details.locale){
+        let resolveEntry = Object.assign({}, entry, builtEntry(contentType.schema, entry, entry.publish_details.locale, entriesNodeIds, assetsNodeIds, createNodeId));
+        return resolveEntry;
+    } else {
+        return null;
+    }
 }
 
 
 const makeAssetNodeUid = exports.makeAssetNodeUid = (asset, createNodeId) => {
-    let publishedLocale = asset.publish_details.locale;
-    return createNodeId(`contentstack-assets-${asset.uid}-${publishedLocale}`);
+    if(asset && asset.publish_details && asset.publish_details.locale){
+        let publishedLocale = asset.publish_details.locale;
+        return createNodeId(`contentstack-assets-${asset.uid}-${publishedLocale}`);
+    }
 };
 
 const makeEntryNodeUid = exports.makeEntryNodeUid = (entry, createNodeId) => {
-    let publishedLocale = entry.publish_details.locale;
-    return createNodeId(`contentstack-entry-${entry.uid}-${publishedLocale}`);
+    if(entry && entry.publish_details && entry.publish_details.locale){
+        let publishedLocale = entry.publish_details.locale;
+        return createNodeId(`contentstack-entry-${entry.uid}-${publishedLocale}`);
+    }
 };
 
 const normalizeGroup = (field, value, locale, entriesNodeIds, assetsNodeIds, createNodeId) => {

@@ -67,18 +67,26 @@ exports.processEntry = function (content_type, entry, createNodeId, createConten
 };
 
 exports.normalizeEntry = function (contentType, entry, entriesNodeIds, assetsNodeIds, createNodeId) {
-    var resolveEntry = (0, _assign2.default)({}, entry, builtEntry(contentType.schema, entry, entry.publish_details.locale, entriesNodeIds, assetsNodeIds, createNodeId));
-    return resolveEntry;
+    if (entry.publish_details && entry.publish_details.locale) {
+        var resolveEntry = (0, _assign2.default)({}, entry, builtEntry(contentType.schema, entry, entry.publish_details.locale, entriesNodeIds, assetsNodeIds, createNodeId));
+        return resolveEntry;
+    } else {
+        return null;
+    }
 };
 
 var makeAssetNodeUid = exports.makeAssetNodeUid = function (asset, createNodeId) {
-    var publishedLocale = asset.publish_details.locale;
-    return createNodeId("contentstack-assets-" + asset.uid + "-" + publishedLocale);
+    if (asset && asset.publish_details && asset.publish_details.locale) {
+        var publishedLocale = asset.publish_details.locale;
+        return createNodeId("contentstack-assets-" + asset.uid + "-" + publishedLocale);
+    }
 };
 
 var makeEntryNodeUid = exports.makeEntryNodeUid = function (entry, createNodeId) {
-    var publishedLocale = entry.publish_details.locale;
-    return createNodeId("contentstack-entry-" + entry.uid + "-" + publishedLocale);
+    if (entry && entry.publish_details && entry.publish_details.locale) {
+        var publishedLocale = entry.publish_details.locale;
+        return createNodeId("contentstack-entry-" + entry.uid + "-" + publishedLocale);
+    }
 };
 
 var normalizeGroup = function normalizeGroup(field, value, locale, entriesNodeIds, assetsNodeIds, createNodeId) {

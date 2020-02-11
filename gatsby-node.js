@@ -116,13 +116,17 @@ exports.sourceNodes = function () {
                                 return item.content_type_uid === contentType.uid;
                             });
                             var normalizedEntry = normalizeEntry(contentType, item.data, entriesNodeIds, assetsNodeIds, createNodeId);
-                            var entryNode = processEntry(contentType, normalizedEntry, createNodeId, createContentDigest);
-                            createNode(entryNode);
+                            var entryNode = normalizedEntry ? processEntry(contentType, normalizedEntry, createNodeId, createContentDigest) : null;
+                            if (entryNode) {
+                                createNode(entryNode);
+                            }
                         });
 
                         syncData['asset_published'] && syncData['asset_published'].forEach(function (item) {
                             var assetNode = processAsset(item.data, createNodeId, createContentDigest);
-                            createNode(assetNode);
+                            if (assetNode) {
+                                createNode(assetNode);
+                            }
                         });
 
                         contentstackData.contentTypes.forEach(function (contentType) {
