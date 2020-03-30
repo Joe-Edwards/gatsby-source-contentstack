@@ -106,17 +106,19 @@ const normalizeModularBlock = (blocks, value, locale, entriesNodeIds, assetsNode
 
 const normalizeReferenceField = (value, locale, entriesNodeIds, createNodeId) => {
     let reference = [];
-    value.forEach(entry => {
-        if(typeof entry === "object" && entry.uid){
-            if(entriesNodeIds.has(createNodeId(`contentstack-entry-${entry.uid}-${locale}`))){
-                reference.push(createNodeId(`contentstack-entry-${entry.uid}-${locale}`));    
+    if(value && value.length && Array.isArray(value)){
+        value.forEach(entry => {
+            if(typeof entry === "object" && entry.uid){
+                if(entriesNodeIds.has(createNodeId(`contentstack-entry-${entry.uid}-${locale}`))){
+                    reference.push(createNodeId(`contentstack-entry-${entry.uid}-${locale}`));    
+                }
+            } else {
+                if(entriesNodeIds.has(createNodeId(`contentstack-entry-${entry}-${locale}`))){
+                    reference.push(createNodeId(`contentstack-entry-${entry}-${locale}`));    
+                } 
             }
-        } else {
-            if(entriesNodeIds.has(createNodeId(`contentstack-entry-${entry}-${locale}`))){
-                reference.push(createNodeId(`contentstack-entry-${entry}-${locale}`));    
-            } 
-        }
-    });
+        });
+    }
     return reference;
 }
 
@@ -165,7 +167,7 @@ const builtEntry = (schema, entry, locale, entriesNodeIds, assetsNodeIds, create
             default: 
             entryObj[field.uid] = value;
         }
-
+    
     });
     return entryObj;
 }

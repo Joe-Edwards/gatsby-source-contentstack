@@ -67,6 +67,7 @@ exports.processEntry = function (content_type, entry, createNodeId, createConten
 };
 
 exports.normalizeEntry = function (contentType, entry, entriesNodeIds, assetsNodeIds, createNodeId) {
+    console.log("normalizeEntry", contentType.uid, entry.uid, entry._version, entry.publish_details.locale);
     if (entry.publish_details && entry.publish_details.locale) {
         var resolveEntry = (0, _assign2.default)({}, entry, builtEntry(contentType.schema, entry, entry.publish_details.locale, entriesNodeIds, assetsNodeIds, createNodeId));
         return resolveEntry;
@@ -126,17 +127,19 @@ var normalizeModularBlock = function normalizeModularBlock(blocks, value, locale
 
 var normalizeReferenceField = function normalizeReferenceField(value, locale, entriesNodeIds, createNodeId) {
     var reference = [];
-    value.forEach(function (entry) {
-        if ((typeof entry === "undefined" ? "undefined" : (0, _typeof3.default)(entry)) === "object" && entry.uid) {
-            if (entriesNodeIds.has(createNodeId("contentstack-entry-" + entry.uid + "-" + locale))) {
-                reference.push(createNodeId("contentstack-entry-" + entry.uid + "-" + locale));
+    if (value && value.length && Array.isArray(value)) {
+        value.forEach(function (entry) {
+            if ((typeof entry === "undefined" ? "undefined" : (0, _typeof3.default)(entry)) === "object" && entry.uid) {
+                if (entriesNodeIds.has(createNodeId("contentstack-entry-" + entry.uid + "-" + locale))) {
+                    reference.push(createNodeId("contentstack-entry-" + entry.uid + "-" + locale));
+                }
+            } else {
+                if (entriesNodeIds.has(createNodeId("contentstack-entry-" + entry + "-" + locale))) {
+                    reference.push(createNodeId("contentstack-entry-" + entry + "-" + locale));
+                }
             }
-        } else {
-            if (entriesNodeIds.has(createNodeId("contentstack-entry-" + entry + "-" + locale))) {
-                reference.push(createNodeId("contentstack-entry-" + entry + "-" + locale));
-            }
-        }
-    });
+        });
+    }
     return reference;
 };
 
@@ -169,6 +172,7 @@ var builtEntry = function builtEntry(schema, entry, locale, entriesNodeIds, asse
         var value = getSchemaValue(entry, field);
         switch (field.data_type) {
             case "reference":
+                //console.log("value reference",value,field, JSON.stringify(value));
                 entryObj[field.uid + "___NODE"] = value && normalizeReferenceField(value, locale, entriesNodeIds, createNodeId);
                 break;
             case "file":
